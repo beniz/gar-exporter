@@ -18,9 +18,11 @@ class GarCollector(object):
 
   def _initialize_analyticsreporting(self):
     
-    credentials = ServiceAccountCredentials.from_p12_keyfile(
-      SERVICE_ACCOUNT_EMAIL, KEY_FILE_LOCATION, scopes=SCOPES)
-
+#    credentials = ServiceAccountCredentials.from_p12_keyfile(
+#      SERVICE_ACCOUNT_EMAIL, KEY_FILE_LOCATION, scopes=SCOPES)
+    credentials = ServiceAccountCredentials.from_json_keyfile_name(
+      KEY_FILE_LOCATION,scopes=SCOPES)
+    
     http = credentials.authorize(httplib2.Http())
     analytics = build('analytics', 'v4', http=http, discoveryServiceUrl=DISCOVERY_URI)
     
@@ -70,7 +72,7 @@ class GarCollector(object):
 if __name__ == '__main__':
   SCOPES = ['https://www.googleapis.com/auth/analytics.readonly']
   DISCOVERY_URI = ('https://analyticsreporting.googleapis.com/$discovery/rest')
-  KEY_FILE_LOCATION = './client_secrets.p12'
+  KEY_FILE_LOCATION = '/mnt/client_secrets.json'
   SERVICE_ACCOUNT_EMAIL = str(os.getenv('ACCOUNT_EMAIL'))
   VIEW_ID = str(os.getenv('VIEW_ID'))
 
