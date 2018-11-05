@@ -35,8 +35,16 @@ class GarCollector(object):
           'reportRequests': [
           {
             'viewId': VIEW_ID,
-            'dateRanges': [{'startDate': str(os.getenv('START_DATE')), 'endDate': 'today'}],
-          'metrics': [{'expression': 'ga:sessions'}, {'expression': 'ga:pageviews'}, {'expression': 'ga:users'}]
+            'dateRanges': [{'startDate': 'yesterday', 'endDate': 'today'}],
+          'metrics': [
+            {'expression': 'ga:percentNewSessions'},
+            {'expression': 'ga:goal1Completions'}, # AMI
+            {'expression': 'ga:goal4Completions'}, # install
+            {'expression': 'ga:goal5Completions'}, # platform
+            {'expression': 'ga:goal6Completions'}, # models
+            {'expression': 'ga:avgSessionDuration'},
+            {'expression': 'ga:bounceRate'}
+            ]
           }]
         }
     ).execute()
@@ -65,7 +73,7 @@ class GarCollector(object):
           for metricHeader, returnValue in zip(metricHeaders, values.get('values')):
             metric = metricHeader.get('name')[3:]
             print(metric + ': ' + returnValue)
-            self._gauges[metric] = GaugeMetricFamily('%s_%s' % (METRIC_PREFIX, metric), '%s' % metric, value=None, labels=LABELS)
+            self._gauges[metric] = GaugeMetricFamily('%s_%s' % (METRIC_PREFIX, metric.replace(':','_').replace('/','_')), '%s' % metric, value=None, labels=LABELS)
             self._gauges[metric].add_metric([VIEW_ID, SERVICE_ACCOUNT_EMAIL], value=float(returnValue))
 
 
